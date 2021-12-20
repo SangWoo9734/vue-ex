@@ -1,36 +1,47 @@
 <template>
   <div>
     <div v-if="tab == 0">
-        <Post v-for="(d, i) in contents" :key="i" :content="d" />
+        <Post v-for="(d, i) in contents" :key="i" :content="d" :postId="i" />
     </div>
     <!-- 필터선택페이지 -->
     <div v-if="tab == 1">
-        <div class="upload-image" :style="{backgroundImage : `url(${imgUrl})`}" ></div>
+        <div :class="`${changedFilter} upload-image`" :style="{backgroundImage : `url(${imgUrl})`}" ></div>
         <div class="filters">
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
-        <div class="filter-1"></div>
+          <FilterBox v-for="filter in filterList" :key="filter" :filter="filter" :imgUrl="imgUrl">
+            {{filter}}
+          </FilterBox>
         </div>
     </div>
 
     <!-- 글작성페이지 -->
     <div v-if="tab == 2">
-        <div class="upload-image" :style="{backgroundImage : `url(${imgUrl})`}"></div>
+        <div :class="`${changedFilter} upload-image`" :style="{backgroundImage : `url(${imgUrl})`}"></div>
         <div class="write">
         <textarea @input="$emit('text', $event.target.value)" class="write-box">write!</textarea>
         </div>
+    </div>
+
+    <div v-if="tab == 3">
+        <Mypage />
     </div>
   </div>
 </template>
 
 <script>
 import Post from "./Post.vue";
+import FilterBox from "./Filter.vue";
+import Mypage from "./Mypage.vue";
 export default {
   name: "container",
+  mounted() {
+    this.emitter.on('filter', (value)=> {
+      this.changedFilter = value;
+    })
+  },
   components: {
     Post: Post,
+    FilterBox : FilterBox,
+    Mypage : Mypage,
   },
   props: {
     contents: Array,
@@ -39,6 +50,10 @@ export default {
   },
   data() {
     return {
+      changedFilter : "",
+      filterList : [ "aden", "_1977", "brannan", "brooklyn", "clarendon", "earlybird", "gingham", "hudson", 
+                    "inkwell", "kelvin", "lark", "lofi", "maven", "mayfair", "moon", "nashville", "perpetua", 
+                    "reyes", "rise", "slumber", "stinson", "toaster", "valencia", "walden", "willow", "xpro2"]
     };
   },
 };

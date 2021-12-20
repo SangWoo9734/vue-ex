@@ -4,13 +4,13 @@
       <div class="profile" :style="{backgroundImage : `url(${content.userImage})`}"> </div>
       <span class="profile-name">{{content.name}}</span>
     </div>
-    <div class="post-body" :style="{backgroundImage : `url(${content.postImage})`}"> </div>
+    <div :class="`${content.filter} post-body`" :style="{backgroundImage : `url(${content.postImage})`}"  @click="$store.commit('liked', [postId, like]); like = !like"> </div>
     <div class="post-content">
-      <p>{{content.likes}} Likes</p>
+      <p>{{$store.state.likes[postId]}} Likes</p>
       <p><strong>{{content.name}}</strong> {{content.content}}</p>
       <p class="date">{{content.date}}</p>
     </div>
-</div> 
+  </div> 
 </template>
 
 <script>
@@ -18,8 +18,15 @@ export default {
   name : 'post',
   props : {
     content : Object,
+    postId: Number,
+  },
+  data() {
+    return {
+      like : 0
+    }
   }
 };
+
 </script>
 
 <style>

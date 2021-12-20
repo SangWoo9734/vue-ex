@@ -1,10 +1,12 @@
 <template>
   <div class="header">
     <ul class="header-button-left">
-      <li @click="tab = 0">Cancel</li>
+      <li v-if="tab != 0" @click="tab = 0">Cancel</li>
+      <li v-if="tab == 0" @click="tab = 3">Follower</li>
     </ul>
     <ul class="header-button-right">
-      <li  v-if='tab != 2' @click="tab++">Next</li>
+      <li  v-if='tab == 3' @click="tab = 0">Home</li>
+      <li  v-if='tab < 2' @click="tab++">Next</li>
       <li  v-if='tab == 2' @click="publish">Publi</li>
     </ul>
     <img src="./assets/logo.png" class="logo" />
@@ -12,7 +14,6 @@
 
   <Container :contents='contents' :tab='tab' :imgUrl="imgUrl" @text='newText = $event'/>
 
-  <button @click="more">더보기</button>
 
   <div class="footer">
     <ul class="footer-button-plus">
@@ -33,14 +34,29 @@ export default {
     return {
       contents : posts,
       morePost : 0,
-      tab : 0,
+      tab : 3,
       imgUrl : '',
       newText : '',
+      newFilter : '',
+      counter : 0,
     }
+  },
+
+  mounted() {
+    this.emitter.on('filter', (value)=>{ //value -> 이벤트 발사할때 들어있던 데이터
+      this.newFilter = value;
+    });
   },
   components: {
     Container : Container,
   },
+
+  computed : {
+    now2() {
+      return new Date();
+    }
+  },
+
   methods : {
     more() {
       axios.get(`https://codingapple1.github.io/vue/more${this.morePost}.json`).then((result) => {
@@ -63,7 +79,7 @@ export default {
       date: "May 15",
       liked: false,
       content: this.newText,
-      filter: "perpetua"
+      filter: this.newFilter
     }
       this.contents.unshift(newPost);
       this.tab = 0;
